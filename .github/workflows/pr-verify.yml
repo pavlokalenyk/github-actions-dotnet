@@ -23,6 +23,7 @@ jobs:
         run: echo "Deploying to staging..."
 
   qa-approval:
+    name: QA-Approval
     runs-on: ubuntu-latest
     needs: deploy-staging
     environment: qa-approval

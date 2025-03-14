@@ -17,5 +17,14 @@ jobs:
         with:
           dotnet-version: 8.0
 
+      # Build the project
       - name: Build with dotnet
         run: dotnet build --configuration Release
+
+      # Run tests
+      - name: dotnet test
+        run: dotnet test --configuration Release --no-build
+
+      # Run code analysis
+      - name: dotnet format
+        run: dotnet format -v detailed --verify-no-changes

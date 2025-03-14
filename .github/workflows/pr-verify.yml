@@ -1,16 +1,48 @@
-name: Manual QA Approval
+name: CI/CD with Manual QA Approval
 
 on:
   pull_request:
     branches: [ "main" ]
-
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
-  manual-approval:
-    name: "Manual QA Approval"
+  stage-1:
+    name: "Run Tests and Initial Tasks"
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Tests
+        run: echo "Running tests..."
+
+      # Additional tasks can be added here
+
+  stage-2:
+    name: "Manual QA Approval"
+    runs-on: ubuntu-latest
+    needs: stage-1  # Ensure stage-1 completes before this
+
+    steps:
       - name: Wait for QA Approval
-        run: echo "Waiting for QA to approve..."
+        run: |
+          echo "QA team, please approve to continue with the next stage."
+
+      - name: Approval step
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          repository: ${{ github.repository }}
+          workflow: 'manual-approval.yml'  # Path to another workflow or the same
+          ref: ${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  stage-3:
+    name: "Final Tasks After Approval"
+    runs-on: ubuntu-latest
+    needs: stage-2  # Wait for manual approval from stage-2
+
+    steps:
+      - name: Run post-approval tasks
+        run: echo "Post-approval tasks are running..."

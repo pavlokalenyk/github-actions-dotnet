@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with QA Approval
+name: PR Verify
 
 on:
   pull_request:

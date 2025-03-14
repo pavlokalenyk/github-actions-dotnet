@@ -3,32 +3,37 @@ name: PR Verify
 on:
   pull_request:
     branches:
-      - main
+      - main  # This will trigger the workflow when a PR is created or updated targeting the main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Build
-        run: echo "Building the application..."
-
-      - name: Run tests
-        run: echo "Running unit tests..."
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          # Add your test commands here
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to Staging
+        run: echo "Deploying to staging..."
 
   qa-approval:
     runs-on: ubuntu-latest
-    needs: build
-    environment: QA-Approval  # Reference the environment created earlier
+    needs: deploy-staging
+    environment: qa-approval  # This is the environment requiring manual approval
     steps:
-      - name: Wait for QA approval
-        run: echo "Waiting for QA approval..."
+      - name: Wait for QA Approval
+        run: echo "Waiting for QA to approve the testing completion..."
 
-  deploy:
+  deploy-prod:
     runs-on: ubuntu-latest
-    needs: QA-Approval
+    needs: qa-approval  # This job will only run after QA approval
     steps:
-      - name: Deploy
-        run: echo "Deploying the application..."
+      - name: Deploy to Production
+        run: echo "Deploying to production..."

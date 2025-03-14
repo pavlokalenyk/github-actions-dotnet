@@ -17,32 +17,26 @@ jobs:
       - name: Run Tests
         run: echo "Running tests..."
 
-      # Additional tasks can be added here
+      # Add other steps as needed here (linting, etc.)
 
-  stage-2:
+  manual-approval:
     name: "Manual QA Approval"
     runs-on: ubuntu-latest
-    needs: stage-1  # Ensure stage-1 completes before this
+    needs: stage-1  # This ensures stage-1 runs before this
+
+    environment: QA-Approval  # This references the environment you created
 
     steps:
       - name: Wait for QA Approval
         run: |
-          echo "QA team, please approve to continue with the next stage."
-
-      - name: Approval step
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          repository: ${{ github.repository }}
-          workflow: 'manual-approval.yml'  # Path to another workflow or the same
-          ref: ${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Waiting for manual approval from QA."
+          echo "After approval, the workflow will continue."
 
   stage-3:
     name: "Final Tasks After Approval"
     runs-on: ubuntu-latest
-    needs: stage-2  # Wait for manual approval from stage-2
+    needs: manual-approval  # This job waits for approval before running
 
     steps:
-      - name: Run post-approval tasks
-        run: echo "Post-approval tasks are running..."
+      - name: Run Post-Approval Tasks
+        run: echo "Running post-approval tasks..."

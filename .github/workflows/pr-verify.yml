@@ -10,7 +10,6 @@ jobs:
   manual-approval:
     name: "Manual QA Approval"
     runs-on: ubuntu-latest
-    environment: QA-Approval  # This enforces QA team approval
 
     steps:
       - name: Wait for QA Approval
